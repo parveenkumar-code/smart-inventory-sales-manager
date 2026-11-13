@@ -1,0 +1,40 @@
+<div class="settings-card">
+
+    <h3>Purchase Settings</h3>
+
+    <form method="POST"
+          action="{{ url_for('save_purchase_settings') }}">
+
+        <label>Purchase Invoice Prefix</label>
+
+        <input type="text"
+               name="purchase_prefix"
+               class="form-control"
+               value="PUR">
+
+        <label>Default Payment Method</label>
+
+        <select name="purchase_payment_method"
+                class="form-control">
+
+            <option>Cash</option>
+
+            <option>UPI</option>
+
+            <option>Bank Transfer</option>
+
+            <option>Credit</option>
+
+        </select>
+
+        <br>
+
+        <button class="btn btn-primary">
+
+            Save Purchase Settings
+
+        </button>
+
+    </form>
+
+</div>

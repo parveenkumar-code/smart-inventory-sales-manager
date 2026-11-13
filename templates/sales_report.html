@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Analytics{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Sales Analytics Dashboard</h2>
+
+            <p class="text-muted">
+                Monitor your sales and business performance.
+            </p>
+        </div>
+
+        <a href="{{ url_for('reports') }}"
+           class="btn btn-secondary">
+            Back to Reports
+        </a>
+
+    </div>
+
+
+    <!-- DATE FILTER -->
+
+    <div class="card shadow-sm p-3 mb-4">
+
+        <form method="GET"
+              action="{{ url_for('sales_report') }}"
+              class="row align-items-end">
+
+            <div class="col-md-4">
+
+                <label>Start Date</label>
+
+                <input type="date"
+                       name="start_date"
+                       class="form-control"
+                       value="{{ start_date }}">
+
+            </div>
+
+            <div class="col-md-4">
+
+                <label>End Date</label>
+
+                <input type="date"
+                       name="end_date"
+                       class="form-control"
+                       value="{{ end_date }}">
+
+            </div>
+
+            <div class="col-md-4 mt-3">
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    Apply Filter
+
+                </button>
+
+                <a href="{{ url_for('sales_report') }}"
+                   class="btn btn-secondary">
+
+                    Reset
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="row">
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Total Sales</h6>
+
+                <h2 class="text-success">
+                    ₹{{ "%.2f"|format(total_sales) }}
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Total Orders</h6>
+
+                <h2 class="text-primary">
+                    {{ total_orders }}
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Items Sold</h6>
+
+                <h2 class="text-warning">
+                    {{ total_items }}
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Average Order Value</h6>
+
+                <h2 class="text-info">
+                    ₹{{ "%.2f"|format(average_order) }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MONTHLY SALES CHART -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Monthly Sales Analytics</h4>
+
+        <canvas id="monthlySalesChart"></canvas>
+
+    </div>
+
+
+    <!-- DAILY SALES CHART -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Daily Sales Analytics</h4>
+
+        <canvas id="dailySalesChart"></canvas>
+
+    </div>
+
+
+    <!-- TOP PRODUCTS -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Top 5 Selling Products</h4>
+
+        <canvas id="topProductsChart"></canvas>
+
+    </div>
+
+
+    <!-- SALES HISTORY -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Sales History</h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>Sale ID</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for sale in sales_history %}
+
+                    <tr>
+
+                        <td>{{ sale.sale_id }}</td>
+
+                        <td>{{ sale.customer_name }}</td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(sale.total_amount) }}
+                        </td>
+
+                        <td>{{ sale.payment_method or 'N/A' }}</td>
+
+                        <td>{{ sale.sale_date }}</td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="text-center">
+
+                            No sales records found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const monthlyLabels = {{ monthly_labels | tojson }};
+const monthlyValues = {{ monthly_values | tojson }};
+
+const dailyLabels = {{ daily_labels | tojson }};
+const dailyValues = {{ daily_values | tojson }};
+
+const productLabels = {{ product_labels | tojson }};
+const productValues = {{ product_values | tojson }};
+
+
+// MONTHLY SALES CHART
+
+new Chart(document.getElementById('monthlySalesChart'), {
+
+    type: 'bar',
+
+    data: {
+
+        labels: monthlyLabels,
+
+        datasets: [{
+
+            label: 'Monthly Sales (₹)',
+
+            data: monthlyValues,
+
+            borderWidth: 1
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true
+
+            }
+
+        }
+
+    }
+
+});
+
+
+// DAILY SALES CHART
+
+new Chart(document.getElementById('dailySalesChart'), {
+
+    type: 'line',
+
+    data: {
+
+        labels: dailyLabels,
+
+        datasets: [{
+
+            label: 'Daily Sales (₹)',
+
+            data: dailyValues,
+
+            tension: 0.3,
+
+            fill: false
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true
+
+    }
+
+});
+
+
+// TOP PRODUCTS CHART
+
+new Chart(document.getElementById('topProductsChart'), {
+
+    type: 'doughnut',
+
+    data: {
+
+        labels: productLabels,
+
+        datasets: [{
+
+            label: 'Quantity Sold',
+
+            data: productValues
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

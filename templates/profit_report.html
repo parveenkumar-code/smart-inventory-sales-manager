@@ -1,0 +1,483 @@
+{% extends "base.html" %}
+
+{% block title %}Profit & Revenue Analytics{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Profit & Revenue Analytics</h2>
+
+            <p class="text-muted">
+                Monitor your business profitability.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('reports') }}"
+           class="btn btn-secondary">
+
+            Back to Reports
+
+        </a>
+
+    </div>
+
+
+    <!-- DATE FILTER -->
+
+    <div class="card shadow-sm p-3 mb-4">
+
+        <form method="GET"
+              action="{{ url_for('profit_report') }}"
+              class="row align-items-end">
+
+            <div class="col-md-4">
+
+                <label>Start Date</label>
+
+                <input
+                    type="date"
+                    name="start_date"
+                    class="form-control"
+                    value="{{ start_date }}"
+                >
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <label>End Date</label>
+
+                <input
+                    type="date"
+                    name="end_date"
+                    class="form-control"
+                    value="{{ end_date }}"
+                >
+
+            </div>
+
+
+            <div class="col-md-4 mt-3">
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    Apply Filter
+
+                </button>
+
+                <a href="{{ url_for('profit_report') }}"
+                   class="btn btn-secondary">
+
+                    Reset
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="row">
+
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Total Revenue</h6>
+
+                <h2 class="text-success">
+
+                    ₹{{ "%.2f"|format(total_revenue) }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Total Purchase Cost</h6>
+
+                <h2 class="text-primary">
+
+                    ₹{{ "%.2f"|format(total_purchase_cost) }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Estimated COGS</h6>
+
+                <h2 class="text-warning">
+
+                    ₹{{ "%.2f"|format(total_cogs) }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Estimated Gross Profit</h6>
+
+                <h2 class="{% if gross_profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+
+                    ₹{{ "%.2f"|format(gross_profit) }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h6>Estimated Profit Margin</h6>
+
+                <h2 class="text-info">
+
+                    {{ "%.2f"|format(profit_margin) }}%
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MONTHLY REVENUE AND PROFIT -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Monthly Revenue & Profit</h4>
+
+        <canvas id="monthlyProfitChart"></canvas>
+
+    </div>
+
+
+    <!-- REVENUE VS PURCHASE -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Revenue vs Purchase Cost</h4>
+
+        <canvas id="comparisonChart"></canvas>
+
+    </div>
+
+
+    <!-- TOP PROFITABLE PRODUCTS -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Top 5 Profitable Products</h4>
+
+        <canvas id="topProfitChart"></canvas>
+
+    </div>
+
+
+    <!-- PRODUCT-WISE PROFIT TABLE -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Product-wise Profit Report</h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Product</th>
+
+                        <th>Quantity Sold</th>
+
+                        <th>Sales Amount</th>
+
+                        <th>Estimated Cost</th>
+
+                        <th>Estimated Profit</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for product in product_profit %}
+
+                    <tr>
+
+                        <td>{{ product.product_name }}</td>
+
+                        <td>{{ product.quantity_sold }}</td>
+
+                        <td>
+
+                            ₹{{ "%.2f"|format(product.sales_amount or 0) }}
+
+                        </td>
+
+                        <td>
+
+                            ₹{{ "%.2f"|format(product.estimated_cost or 0) }}
+
+                        </td>
+
+                        <td class="{% if product.estimated_profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+
+                            ₹{{ "%.2f"|format(product.estimated_profit or 0) }}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="5" class="text-center">
+
+                            No profit records found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="alert alert-info mt-4">
+
+        <strong>Note:</strong>
+
+        Profit is estimated using the current product purchase price.
+        Historical purchase costs are not stored in the existing
+        sales items table.
+
+    </div>
+
+</div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+// MONTHLY REVENUE AND PROFIT DATA
+
+const revenueLabels = {{ revenue_labels | tojson }};
+
+const revenueValues = {{ revenue_values | tojson }};
+
+const profitValues = {{ profit_values | tojson }};
+
+
+// TOP PRODUCTS DATA
+
+const topProductLabels = {{ top_product_labels | tojson }};
+
+const topProductValues = {{ top_product_values | tojson }};
+
+
+// COMPARISON DATA
+
+const comparisonLabels = {{ comparison_labels | tojson }};
+
+const comparisonValues = {{ comparison_values | tojson }};
+
+
+// MONTHLY PROFIT CHART
+
+new Chart(
+
+    document.getElementById("monthlyProfitChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: revenueLabels,
+
+            datasets: [
+
+                {
+
+                    label: "Revenue (₹)",
+
+                    data: revenueValues,
+
+                    borderWidth: 1
+
+                },
+
+                {
+
+                    label: "Estimated Profit (₹)",
+
+                    data: profitValues,
+
+                    borderWidth: 1
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+// REVENUE VS PURCHASE CHART
+
+new Chart(
+
+    document.getElementById("comparisonChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: comparisonLabels,
+
+            datasets: [
+
+                {
+
+                    label: "Amount (₹)",
+
+                    data: comparisonValues,
+
+                    borderWidth: 1
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true
+
+        }
+
+    }
+
+);
+
+
+// TOP PROFITABLE PRODUCTS
+
+new Chart(
+
+    document.getElementById("topProfitChart"),
+
+    {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: topProductLabels,
+
+            datasets: [
+
+                {
+
+                    label: "Estimated Profit",
+
+                    data: topProductValues
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true
+
+        }
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+<div class="settings-card">
+
+    <h3>Company Profile</h3>
+
+    <form method="POST"
+          action="{{ url_for('save_company_settings') }}"
+          enctype="multipart/form-data">
+
+        <label>Company Name</label>
+
+        <input type="text"
+               name="company_name"
+               class="form-control"
+               required>
+
+        <label>Email Address</label>
+
+        <input type="email"
+               name="company_email"
+               class="form-control">
+
+        <label>Phone Number</label>
+
+        <input type="text"
+               name="company_phone"
+               class="form-control">
+
+        <label>Company Address</label>
+
+        <textarea name="company_address"
+                  class="form-control"></textarea>
+
+        <label>GST / Tax Number</label>
+
+        <input type="text"
+               name="tax_number"
+               class="form-control">
+
+        <label>Company Logo</label>
+
+        <input type="file"
+               name="company_logo"
+               accept="image/png,image/jpeg,image/webp"
+               class="form-control">
+
+        <br>
+
+        <button class="btn btn-primary">
+
+            Save Company Profile
+
+        </button>
+
+    </form>
+
+</div>

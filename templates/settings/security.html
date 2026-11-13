@@ -1,0 +1,39 @@
+<div class="settings-card">
+
+    <h3>Security Settings</h3>
+
+    <form method="POST"
+          action="{{ url_for('change_password') }}">
+
+        <label>Current Password</label>
+
+        <input type="password"
+               name="current_password"
+               class="form-control"
+               required>
+
+        <label>New Password</label>
+
+        <input type="password"
+               name="new_password"
+               class="form-control"
+               required>
+
+        <label>Confirm New Password</label>
+
+        <input type="password"
+               name="confirm_password"
+               class="form-control"
+               required>
+
+        <br>
+
+        <button class="btn btn-primary">
+
+            Update Password
+
+        </button>
+
+    </form>
+
+</div>

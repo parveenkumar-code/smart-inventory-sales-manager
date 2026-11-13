@@ -1,0 +1,45 @@
+.settings-card {
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 12px;
+
+    margin-bottom: 20px;
+
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+
+}
+
+.settings-card h3 {
+
+    font-weight: 600;
+
+    margin-bottom: 10px;
+
+}
+
+.settings-card label {
+
+    margin-top: 15px;
+
+    margin-bottom: 7px;
+
+    font-weight: 500;
+
+}
+
+.settings-card input,
+.settings-card select,
+.settings-card textarea {
+
+    border-radius: 8px;
+
+}
+
+.settings-card button {
+
+    margin-top: 15px;
+
+}

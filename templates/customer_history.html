@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Purchase History{% endblock %}
+
+{% block content %}
+
+<h2>Customer Purchase History</h2>
+
+<p class="text-muted">
+    View customer information and previous purchases.
+</p>
+
+
+<div class="card p-4 mb-4">
+
+    <h4>{{ customer.customer_name }}</h4>
+
+    <p>
+        <strong>Phone:</strong>
+        {{ customer.phone or '-' }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ customer.email or '-' }}
+    </p>
+
+    <p>
+        <strong>Address:</strong>
+        {{ customer.address or '-' }}
+    </p>
+
+</div>
+
+
+<div class="row mb-4">
+
+    <div class="col-md-6">
+
+        <div class="card p-4">
+
+            <h5>Total Purchases</h5>
+
+            <h2>{{ total_purchases }}</h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-6">
+
+        <div class="card p-4">
+
+            <h5>Total Spending</h5>
+
+            <h2>
+                ₹{{ "%.2f"|format(total_spending) }}
+            </h2>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card p-3">
+
+    <h4>Previous Purchases</h4>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Sale ID</th>
+
+                    <th>Subtotal</th>
+
+                    <th>Discount</th>
+
+                    <th>Tax</th>
+
+                    <th>Total Amount</th>
+
+                    <th>Payment</th>
+
+                    <th>Date</th>
+
+                    <th>Invoice</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for purchase in purchases %}
+
+                <tr>
+
+                    <td>{{ purchase.sale_id }}</td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(purchase.subtotal) }}
+                    </td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(purchase.discount) }}
+                    </td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(purchase.tax_amount) }}
+                    </td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(purchase.total_amount) }}
+                    </td>
+
+                    <td>{{ purchase.payment_method }}</td>
+
+                    <td>{{ purchase.sale_date }}</td>
+
+                    <td>
+
+                        <a
+                            href="{{ url_for('invoice', sale_id=purchase.sale_id) }}"
+                            class="btn btn-sm btn-primary">
+
+                            View Invoice
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="8"
+                        class="text-center">
+
+                        No purchase history found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<a href="{{ url_for('customers') }}"
+   class="btn btn-secondary mt-3">
+
+    Back to Customers
+
+</a>
+
+{% endblock %}

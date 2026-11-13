@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Update Stock{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Stock Management</h2>
+
+    <p class="text-muted">
+        Add or remove product stock.
+    </p>
+
+    <div class="alert alert-info">
+
+        <strong>Product:</strong>
+        {{ product.product_name }}
+
+        <br>
+
+        <strong>Available Stock:</strong>
+        {{ product.quantity }}
+
+    </div>
+
+
+    {% with messages =
+        get_flashed_messages(with_categories=true) %}
+
+        {% for category, message in messages %}
+
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endwith %}
+
+
+    <form method="POST">
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Select Operation
+            </label>
+
+            <select
+                name="change_type"
+                class="form-control"
+                required
+            >
+
+                <option value="">Select Operation</option>
+
+                <option value="IN">
+                    Stock In
+                </option>
+
+                <option value="OUT">
+                    Stock Out
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Enter Quantity
+            </label>
+
+            <input
+                type="number"
+                name="quantity"
+                class="form-control"
+                min="1"
+                required
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Reason / Description
+            </label>
+
+            <textarea
+                name="note"
+                class="form-control"
+                rows="3"
+                placeholder="Enter reason for stock movement"
+            ></textarea>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+
+            Update Inventory
+
+        </button>
+
+
+        <a
+            href="{{ url_for('inventory') }}"
+            class="btn btn-secondary"
+        >
+
+            Cancel
+
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

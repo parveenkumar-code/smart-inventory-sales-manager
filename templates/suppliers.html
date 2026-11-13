@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Management{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>Supplier Management</h2>
+
+        <p class="text-muted">
+            Manage your suppliers and company details.
+        </p>
+
+    </div>
+
+    <a href="{{ url_for('add_supplier') }}"
+       class="btn btn-primary">
+
+        + Add Supplier
+
+    </a>
+
+</div>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% for category, message in messages %}
+
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+
+{% endwith %}
+
+
+<div class="card p-4 mb-4">
+
+    <h5>Total Suppliers</h5>
+
+    <h2>{{ total_suppliers }}</h2>
+
+</div>
+
+
+<div class="card p-3 mb-4">
+
+    <form method="GET"
+          action="{{ url_for('suppliers') }}"
+          class="d-flex gap-2">
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search supplier..."
+            value="{{ search }}"
+        >
+
+        <button class="btn btn-primary">
+            Search
+        </button>
+
+        <a href="{{ url_for('suppliers') }}"
+           class="btn btn-secondary">
+
+            Reset
+
+        </a>
+
+    </form>
+
+</div>
+
+
+<div class="card p-3">
+
+    <h4>All Suppliers</h4>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Supplier</th>
+
+                    <th>Company</th>
+
+                    <th>Phone</th>
+
+                    <th>Email</th>
+
+                    <th>Address</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for supplier in suppliers %}
+
+                <tr>
+
+                    <td>{{ supplier.supplier_id }}</td>
+
+                    <td>{{ supplier.supplier_name }}</td>
+
+                    <td>{{ supplier.company_name or '-' }}</td>
+
+                    <td>{{ supplier.phone or '-' }}</td>
+
+                    <td>{{ supplier.email or '-' }}</td>
+
+                    <td>{{ supplier.address or '-' }}</td>
+
+                    <td>
+
+                        <a
+                            href="{{ url_for('edit_supplier', supplier_id=supplier.supplier_id) }}"
+                            class="btn btn-sm btn-warning">
+
+                            Edit
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('supplier_history', supplier_id=supplier.supplier_id) }}"
+                            class="btn btn-sm btn-info">
+
+                            History
+
+                        </a>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('delete_supplier', supplier_id=supplier.supplier_id) }}"
+                            style="display:inline;"
+                            onsubmit="return confirm('Delete this supplier?');">
+
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-danger">
+
+                                Delete
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="7"
+                        class="text-center">
+
+                        No suppliers found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

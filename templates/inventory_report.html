@@ -1,0 +1,635 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Analytics{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Inventory Analytics Dashboard</h2>
+
+            <p class="text-muted">
+                Monitor stock levels and inventory performance.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('reports') }}"
+           class="btn btn-secondary">
+
+            Back to Reports
+
+        </a>
+
+    </div>
+
+
+    <!-- DATE FILTER -->
+
+    <div class="card shadow-sm p-3 mb-4">
+
+        <form method="GET"
+              action="{{ url_for('inventory_report') }}"
+              class="row align-items-end">
+
+            <div class="col-md-4">
+
+                <label>Start Date</label>
+
+                <input type="date"
+                       name="start_date"
+                       class="form-control"
+                       value="{{ start_date }}">
+
+            </div>
+
+            <div class="col-md-4">
+
+                <label>End Date</label>
+
+                <input type="date"
+                       name="end_date"
+                       class="form-control"
+                       value="{{ end_date }}">
+
+            </div>
+
+            <div class="col-md-4 mt-3">
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    Apply Filter
+
+                </button>
+
+                <a href="{{ url_for('inventory_report') }}"
+                   class="btn btn-secondary">
+
+                    Reset
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="row">
+
+        <div class="col-md-4 col-lg-2 mb-3">
+
+            <div class="card shadow-sm p-3">
+
+                <h6>Total Products</h6>
+
+                <h2>{{ total_products }}</h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 col-lg-2 mb-3">
+
+            <div class="card shadow-sm p-3">
+
+                <h6>Total Stock</h6>
+
+                <h2 class="text-primary">
+
+                    {{ total_stock }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 col-lg-2 mb-3">
+
+            <div class="card shadow-sm p-3">
+
+                <h6>Inventory Value</h6>
+
+                <h4 class="text-success">
+
+                    ₹{{ "%.2f"|format(inventory_value) }}
+
+                </h4>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 col-lg-2 mb-3">
+
+            <div class="card shadow-sm p-3">
+
+                <h6>Low Stock</h6>
+
+                <h2 class="text-warning">
+
+                    {{ low_stock_count }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 col-lg-2 mb-3">
+
+            <div class="card shadow-sm p-3">
+
+                <h6>Out of Stock</h6>
+
+                <h2 class="text-danger">
+
+                    {{ out_of_stock_count }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 col-lg-2 mb-3">
+
+            <div class="card shadow-sm p-3">
+
+                <h6>Overstock</h6>
+
+                <h2 class="text-info">
+
+                    {{ overstock_count }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STOCK IN AND STOCK OUT -->
+
+    <div class="row mt-3">
+
+        <div class="col-md-6 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h5>Stock In</h5>
+
+                <h2 class="text-success">
+
+                    {{ stock_in }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+
+            <div class="card shadow-sm p-4">
+
+                <h5>Stock Out</h5>
+
+                <h2 class="text-danger">
+
+                    {{ stock_out }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CATEGORY CHART -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Category-wise Inventory</h4>
+
+        <canvas id="categoryChart"></canvas>
+
+    </div>
+
+
+    <!-- STOCK STATUS CHART -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Stock Status Distribution</h4>
+
+        <canvas id="stockStatusChart"></canvas>
+
+    </div>
+
+
+    <!-- INVENTORY VALUE CHART -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Top 5 Products by Inventory Value</h4>
+
+        <canvas id="inventoryValueChart"></canvas>
+
+    </div>
+
+
+    <!-- LOW STOCK PRODUCTS -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Low Stock Products</h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Product ID</th>
+
+                        <th>Product Name</th>
+
+                        <th>Category</th>
+
+                        <th>Available Quantity</th>
+
+                        <th>Minimum Stock</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for product in low_stock_products %}
+
+                    <tr>
+
+                        <td>{{ product.product_id }}</td>
+
+                        <td>{{ product.product_name }}</td>
+
+                        <td>{{ product.category }}</td>
+
+                        <td>{{ product.quantity }}</td>
+
+                        <td>{{ product.minimum_stock }}</td>
+
+                        <td>
+
+                            {% if product.quantity <= 0 %}
+
+                                <span class="badge bg-danger">
+                                    Out of Stock
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Low Stock
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="6" class="text-center">
+
+                            No low-stock products found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOP INVENTORY PRODUCTS -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Top Inventory Products</h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Product</th>
+
+                        <th>Quantity</th>
+
+                        <th>Purchase Price</th>
+
+                        <th>Stock Value</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for product in top_products %}
+
+                    <tr>
+
+                        <td>{{ product.product_name }}</td>
+
+                        <td>{{ product.quantity }}</td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(product.purchase_price or 0) }}
+                        </td>
+
+                        <td>
+                            ₹{{ "%.2f"|format(product.stock_value or 0) }}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="4" class="text-center">
+
+                            No products available.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- STOCK MOVEMENT HISTORY -->
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <h4>Stock Movement History</h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>History ID</th>
+
+                        <th>Product</th>
+
+                        <th>Movement Type</th>
+
+                        <th>Quantity</th>
+
+                        <th>Note</th>
+
+                        <th>Date</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for history in stock_history %}
+
+                    <tr>
+
+                        <td>{{ history.history_id }}</td>
+
+                        <td>{{ history.product_name or 'Deleted Product' }}</td>
+
+                        <td>{{ history.change_type }}</td>
+
+                        <td>{{ history.quantity }}</td>
+
+                        <td>{{ history.note or 'N/A' }}</td>
+
+                        <td>{{ history.created_at }}</td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="6" class="text-center">
+
+                            No stock history found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const categoryLabels = {{ category_labels | tojson }};
+
+const categoryValues = {{ category_values | tojson }};
+
+const statusLabels = {{ status_labels | tojson }};
+
+const statusValues = {{ status_values | tojson }};
+
+const productLabels = {{ top_product_labels | tojson }};
+
+const productValues = {{ top_product_values | tojson }};
+
+
+// CATEGORY-WISE INVENTORY
+
+new Chart(
+
+    document.getElementById("categoryChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: categoryLabels,
+
+            datasets: [{
+
+                label: "Stock Quantity",
+
+                data: categoryValues,
+
+                borderWidth: 1
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+// STOCK STATUS
+
+new Chart(
+
+    document.getElementById("stockStatusChart"),
+
+    {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: statusLabels,
+
+            datasets: [{
+
+                label: "Products",
+
+                data: statusValues
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true
+
+        }
+
+    }
+
+);
+
+
+// INVENTORY VALUE
+
+new Chart(
+
+    document.getElementById("inventoryValueChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: productLabels,
+
+            datasets: [{
+
+                label: "Inventory Value (₹)",
+
+                data: productValues,
+
+                borderWidth: 1
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true
+
+        }
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

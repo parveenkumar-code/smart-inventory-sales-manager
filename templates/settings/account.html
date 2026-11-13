@@ -1,0 +1,23 @@
+<div class="settings-card">
+
+    <h3>My Account</h3>
+
+    <p>Manage your administrator account.</p>
+
+    <label>Username</label>
+
+    <input type="text"
+           value="{{ current_user }}"
+           class="form-control"
+           readonly>
+
+    <hr>
+
+    <a href="{{ url_for('logout') }}"
+       class="btn btn-danger">
+
+        Logout
+
+    </a>
+
+</div>

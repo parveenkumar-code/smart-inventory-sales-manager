@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Management{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>Customer Management</h2>
+
+        <p class="text-muted">
+            Manage all registered customers.
+        </p>
+
+    </div>
+
+    <a href="{{ url_for('add_customer') }}"
+       class="btn btn-primary">
+
+        + Add Customer
+
+    </a>
+
+</div>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% for category, message in messages %}
+
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+
+{% endwith %}
+
+
+<div class="card p-4 mb-4">
+
+    <h5>Total Customers</h5>
+
+    <h2>{{ total_customers }}</h2>
+
+</div>
+
+
+<div class="card p-3 mb-4">
+
+    <form method="GET"
+          action="{{ url_for('customers') }}"
+          class="d-flex gap-2">
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search customer..."
+            value="{{ search }}"
+        >
+
+        <button class="btn btn-primary">
+            Search
+        </button>
+
+        <a href="{{ url_for('customers') }}"
+           class="btn btn-secondary">
+
+            Reset
+
+        </a>
+
+    </form>
+
+</div>
+
+
+<div class="card p-3">
+
+    <h4>All Customers</h4>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Name</th>
+
+                    <th>Phone</th>
+
+                    <th>Email</th>
+
+                    <th>Address</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for customer in customers %}
+
+                <tr>
+
+                    <td>{{ customer.customer_id }}</td>
+
+                    <td>{{ customer.customer_name }}</td>
+
+                    <td>{{ customer.phone or '-' }}</td>
+
+                    <td>{{ customer.email or '-' }}</td>
+
+                    <td>{{ customer.address or '-' }}</td>
+
+                    <td>
+
+                        <a
+                            href="{{ url_for('edit_customer', customer_id=customer.customer_id) }}"
+                            class="btn btn-sm btn-warning">
+
+                            Edit
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('customer_history', customer_id=customer.customer_id) }}"
+                            class="btn btn-sm btn-info">
+
+                            History
+
+                        </a>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('delete_customer', customer_id=customer.customer_id) }}"
+                            style="display:inline;"
+                            onsubmit="return confirm('Are you sure you want to delete this customer?');">
+
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-danger">
+
+                                Delete
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="6"
+                        class="text-center">
+
+                        No customers found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

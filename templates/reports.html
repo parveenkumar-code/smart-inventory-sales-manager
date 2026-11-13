@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Reports & Analytics{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h2 class="mb-2">
+        Reports & Analytics
+    </h2>
+
+    <p class="text-muted">
+        Monitor your business performance.
+    </p>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="row mt-4">
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card p-4 shadow-sm">
+
+                <h5>Total Products</h5>
+
+                <h2>{{ total_products }}</h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card p-4 shadow-sm">
+
+                <h5>Total Customers</h5>
+
+                <h2>{{ total_customers }}</h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card p-4 shadow-sm">
+
+                <h5>Total Suppliers</h5>
+
+                <h2>{{ total_suppliers }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORT LINKS -->
+
+    <div class="card p-4 mt-4">
+
+        <h4>Available Reports</h4>
+
+        <div class="row mt-3">
+
+            <div class="col-md-3 mb-3">
+
+                <a href="{{ url_for('sales_report') }}"
+                   class="btn btn-primary w-100">
+
+                    Sales Report
+
+                </a>
+
+            </div>
+
+
+            <div class="col-md-3 mb-3">
+
+                <a href="{{ url_for('purchase_report') }}"
+                   class="btn btn-success w-100">
+
+                    Purchase Report
+
+                </a>
+
+            </div>
+
+
+            <div class="col-md-3 mb-3">
+
+                <a href="{{ url_for('profit_report') }}"
+                   class="btn btn-warning w-100">
+
+                    Profit Report
+
+                </a>
+
+            </div>
+
+
+            <div class="col-md-3 mb-3">
+
+                <a href="{{ url_for('inventory_report') }}"
+                   class="btn btn-info w-100">
+
+                    Inventory Report
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

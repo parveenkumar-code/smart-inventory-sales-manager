@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Supplier{% endblock %}
+
+{% block content %}
+
+<h2>Edit Supplier</h2>
+
+<div class="card p-4">
+
+    <form method="POST">
+
+        <div class="mb-3">
+
+            <label>Supplier Name</label>
+
+            <input
+                type="text"
+                name="supplier_name"
+                class="form-control"
+                value="{{ supplier.supplier_name }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label>Company Name</label>
+
+            <input
+                type="text"
+                name="company_name"
+                class="form-control"
+                value="{{ supplier.company_name or '' }}"
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label>Phone Number</label>
+
+            <input
+                type="tel"
+                name="phone"
+                class="form-control"
+                value="{{ supplier.phone or '' }}"
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label>Email Address</label>
+
+            <input
+                type="email"
+                name="email"
+                class="form-control"
+                value="{{ supplier.email or '' }}"
+            >
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label>Address</label>
+
+            <textarea
+                name="address"
+                class="form-control"
+                rows="3"
+            >{{ supplier.address or '' }}</textarea>
+
+        </div>
+
+
+        <button type="submit"
+                class="btn btn-primary">
+
+            Update Supplier
+
+        </button>
+
+
+        <a href="{{ url_for('suppliers') }}"
+           class="btn btn-secondary">
+
+            Cancel
+
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Inventory Manager</title>
+
+</head>
+
+<body>
+    {% extends "base.html" %}
+
+{% block title %}
+
+Dashboard | Smart Inventory
+
+{% endblock %}
+
+
+{% block content %}
+
+<h2>Dashboard Overview</h2>
+
+<p class="text-muted">
+    Welcome to Smart Inventory & Sales Manager.
+</p>
+
+
+<div class="dashboard-cards">
+
+
+    <div class="dashboard-card">
+
+        <h5>Total Products</h5>
+
+        <h2>{{ total_products }}</h2>
+
+        <p>Available Products</p>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Total Customers</h5>
+
+        <h2>{{ total_customers }}</h2>
+
+        <p>Registered Customers</p>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Total Sales</h5>
+
+        <h2>{{ total_sales }}</h2>
+
+        <p>Completed Transactions</p>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Total Revenue</h5>
+
+        <h2>₹{{ "%.2f"|format(total_revenue) }}</h2>
+
+        <p>Business Revenue</p>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Low Stock Items</h5>
+
+        <h2>{{ low_stock }}</h2>
+
+        <p>Products Requiring Attention</p>
+
+    </div>
+
+
+</div>
+
+
+<div class="welcome-panel">
+
+    <h3>Welcome to Your Business Dashboard!</h3>
+
+    <p>
+        Manage your products, monitor inventory,
+        track sales and analyze your business performance.
+    </p>
+
+</div>
+
+
+{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Management{% endblock %}
+
+{% block content %}
+
+<h2>Inventory Management</h2>
+
+<p class="text-muted">
+    Monitor and manage your product stock.
+</p>
+
+
+<!-- INVENTORY CARDS -->
+
+<div class="dashboard-cards">
+
+
+    <div class="dashboard-card">
+
+        <h5>Total Products</h5>
+
+        <h2>{{ total_products }}</h2>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Total Stock Units</h5>
+
+        <h2>{{ total_stock }}</h2>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Low Stock Items</h5>
+
+        <h2>{{ low_stock }}</h2>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Out of Stock</h5>
+
+        <h2>{{ out_of_stock }}</h2>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h5>Total Stock Value</h5>
+
+        <h2>₹{{ "%.2f"|format(stock_value) }}</h2>
+
+    </div>
+
+
+</div>
+
+
+<!-- ALERTS -->
+
+{% with messages =
+    get_flashed_messages(with_categories=true) %}
+
+    {% for category, message in messages %}
+
+        <div class="alert alert-{{ category }} mt-3">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+{% endwith %}
+
+
+<!-- SEARCH -->
+
+<div class="card p-3 mt-4 mb-4">
+
+    <form
+        method="GET"
+        action="{{ url_for('inventory') }}"
+        class="d-flex gap-2"
+    >
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search inventory..."
+            value="{{ search }}"
+        >
+
+        <button class="btn btn-primary">
+            Search
+        </button>
+
+        <a
+            href="{{ url_for('inventory') }}"
+            class="btn btn-secondary"
+        >
+
+            Reset
+
+        </a>
+
+    </form>
+
+</div>
+
+
+<!-- INVENTORY TABLE -->
+
+<div class="card p-3">
+
+    <h4>Available Inventory</h4>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Product</th>
+
+                    <th>Category</th>
+
+                    <th>Purchase Price</th>
+
+                    <th>Available Stock</th>
+
+                    <th>Minimum Stock</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for product in products %}
+
+                <tr>
+
+                    <td>
+                        {{ product.product_id }}
+                    </td>
+
+                    <td>
+                        {{ product.product_name }}
+                    </td>
+
+                    <td>
+                        {{ product.category }}
+                    </td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(product.purchase_price) }}
+                    </td>
+
+                    <td>
+                        {{ product.quantity }}
+                    </td>
+
+                    <td>
+                        {{ product.minimum_stock }}
+                    </td>
+
+
+                    <td>
+
+                        {% if product.quantity == 0 %}
+
+                            <span class="badge bg-dark">
+                                Out of Stock
+                            </span>
+
+                        {% elif product.quantity <= product.minimum_stock %}
+
+                            <span class="badge bg-danger">
+                                Low Stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-success">
+                                Available
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <a
+                            href="{{ url_for('stock_update', product_id=product.product_id) }}"
+                            class="btn btn-sm btn-primary"
+                        >
+
+                            Update Stock
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="8"
+                        class="text-center">
+
+                        No inventory records found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

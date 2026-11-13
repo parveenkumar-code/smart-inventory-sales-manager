@@ -1,0 +1,29 @@
+<div class="settings-card">
+
+    <h3>Appearance Settings</h3>
+
+    <form method="POST"
+          action="{{ url_for('save_appearance_settings') }}">
+
+        <label>Application Theme</label>
+
+        <select name="theme"
+                class="form-control">
+
+            <option value="light">Light Mode</option>
+
+            <option value="dark">Dark Mode</option>
+
+        </select>
+
+        <br>
+
+        <button class="btn btn-primary">
+
+            Save Appearance
+
+        </button>
+
+    </form>
+
+</div>

@@ -1,0 +1,62 @@
+<div class="settings-card">
+
+    <h3>General Settings</h3>
+
+    <p>Manage your application preferences.</p>
+
+    <form method="POST"
+          action="{{ url_for('save_general_settings') }}">
+
+        <label>Application Name</label>
+
+        <input type="text"
+               name="app_name"
+               value="{{ settings.get('app_name') }}"
+               class="form-control"
+               required>
+
+        <label>Language</label>
+
+        <select name="language" class="form-control">
+
+            <option value="English">English</option>
+
+            <option value="Hindi">Hindi</option>
+
+        </select>
+
+        <label>Currency</label>
+
+        <select name="currency" class="form-control">
+
+            <option value="INR">INR - Indian Rupee</option>
+
+            <option value="USD">USD - US Dollar</option>
+
+            <option value="EUR">EUR - Euro</option>
+
+        </select>
+
+        <label>Date Format</label>
+
+        <select name="date_format" class="form-control">
+
+            <option>DD-MM-YYYY</option>
+
+            <option>MM-DD-YYYY</option>
+
+            <option>YYYY-MM-DD</option>
+
+        </select>
+
+        <br>
+
+        <button type="submit" class="btn btn-primary">
+
+            Save General Settings
+
+        </button>
+
+    </form>
+
+</div>
