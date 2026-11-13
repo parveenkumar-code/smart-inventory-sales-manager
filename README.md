@@ -93,38 +93,6 @@ The system provides an easy-to-use interface for managing products, tracking sto
 | Flask-Login | User Authentication |
 | Werkzeug | Password Hashing |
 
-## 📂 Project Structure
-
-```text
-smart-inventory-sales-manager/
-│
-├── app.py
-├── database.py
-├── check_database.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-│
-├── templates/
-│   ├── login.html
-│   ├── dashboard.html
-│   ├── products.html
-│   ├── inventory.html
-│   ├── customers.html
-│   ├── suppliers.html
-│   ├── sales.html
-│   └── other HTML templates
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   └── images/
-│
-└── inventory.db
-```
-
-*Note: The database file is generated locally and should not be committed to GitHub.*
-
 ## ⚙️ Installation & Setup
 
 Follow these steps to run the project on your local computer.
